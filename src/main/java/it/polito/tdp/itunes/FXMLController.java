@@ -5,7 +5,12 @@
 package it.polito.tdp.itunes;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.itunes.model.Album;
+import it.polito.tdp.itunes.model.BilancioVertex;
 import it.polito.tdp.itunes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,10 +39,10 @@ public class FXMLController {
     private Button btnPercorso; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbA1"
-    private ComboBox<?> cmbA1; // Value injected by FXMLLoader
+    private ComboBox<Album> cmbA1; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbA2"
-    private ComboBox<?> cmbA2; // Value injected by FXMLLoader
+    private ComboBox<Album> cmbA2; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtN"
     private TextField txtN; // Value injected by FXMLLoader
@@ -51,15 +56,92 @@ public class FXMLController {
     @FXML
     void doCalcolaAdiacenze(ActionEvent event) {
     	
+    Album a1= this.cmbA1.getValue(); 
+    
+    
+    if(a1== null) {
+    	this.txtResult.appendText(" seleziona un valore dall cmbx");
+    	return; 
+
+    }
+	this.txtResult.appendText(" \nI successori del vertice "+a1+" per ordine decrescente di bilancio:  ");
+
+    for(BilancioVertex bv: model.getBilancioSuccessori(a1)) {
+    	this.txtResult.appendText("\n"+bv);
+
+    	
+    }
+    
+    	
     }
 
     @FXML
     void doCalcolaPercorso(ActionEvent event) {
     	
+    	Double soglia=null; 
+      	
+        Album a2= this.cmbA2.getValue(); 
+        Album a1= this.cmbA1.getValue(); 
+
+    	try {
+    		soglia= Double.parseDouble(this.txtX.getText()); 
+    		
+    	}catch (NumberFormatException e) {
+    		txtResult.setText("inserisci un numero");
+
+    	}
+    	
+    	 if(a2== null) {
+    	    	this.txtResult.appendText(" seleziona un valore dall cmbx2");
+    	    	return; 
+
+    	    }
+    	 if(a1== null) {
+ 	    	this.txtResult.appendText(" seleziona un valore dall cmbx1");
+ 	    	return; 
+
+ 	    }
+    	
+	    this.txtResult.appendText("\n\nRISULTATO RICORSIONE: \n");
+	   for(Album aa:  model.getPercorso(a1,a2,soglia)){
+	    this.txtResult.appendText("\n"+aa); 
+	   }
+	   
+	   
+	    this.txtResult.appendText("\nfinish");
+
+	   
+    	
+    	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	Integer durata= null; 
+    	
+    	
+    	try {
+    		durata = Integer.parseInt(this.txtN.getText()); 
+    		
+    	}catch(NumberFormatException e){
+    		this.txtResult.appendText("INSERISCI PARAMETRO CORRETTO ");
+    		return; 
+    	} 
+    	
+    	// prova senza mettere durata..
+    	
+    	this.model.creaGrafo(durata);
+    	
+    	this.txtResult.appendText("VERTICI TOTALI: "+ model.getVertici() );
+    	this.txtResult.appendText("\n ARCHI TOTALI: "+ model.getArchi() );
+    	
+    	List<Album> list = model.getAllVertici() ; 
+    	Collections.sort(list);
+    	
+    	this.cmbA1.getItems().setAll(list); 
+    	this.cmbA2.getItems().setAll(list); 
+    	
+    	
     	
     }
 
