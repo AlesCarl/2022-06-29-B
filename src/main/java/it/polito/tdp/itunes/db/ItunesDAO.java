@@ -175,7 +175,6 @@ public class ItunesDAO {
 				+ "group by a.`AlbumId` "
 				+ "having durataAlbum > ? ";
 		
-//		List<Album> result = new LinkedList<>();
 		int result= 0; 
 		
 		try {
